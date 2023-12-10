@@ -1,12 +1,10 @@
 {
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "yargs": "^17.7.2"
   },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
-  },
-  "dependencies": {
-    "yargs": "^17.6.2"
   }
 }
