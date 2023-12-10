@@ -25,7 +25,6 @@ function getContactById(contactId) {
       if (Number(contact.id) === contactId) {
         return console.log(`contact with ID ${contactId} in contact List`);
       }
-      // console.log("Contact is not found");
     });
   });
 }

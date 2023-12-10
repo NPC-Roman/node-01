@@ -1,6 +1,5 @@
 const contacts = require("./contacts");
 
-// index.js
 const argv = require("yargs").argv;
 
 function invokeAction({ action, id, name, email, phone }) {
@@ -27,5 +26,3 @@ function invokeAction({ action, id, name, email, phone }) {
 }
 
 invokeAction(argv);
-
-
