@@ -1,166 +1,79 @@
-/*
 const fs = require("fs");
 const path = require("path");
 
 const contactsPath = path.resolve("./db/contacts.json");
 
-function listContacts() {
+function listContacts(callback) {
   fs.readFile(contactsPath, "utf8", function (error, data) {
     if (error) {
-      console.log(error.message);
+      return callback(error, null);
     }
     const contacts = JSON.parse(data);
-    console.table(contacts);
+    callback(null, contacts);
   });
 }
 
-function getContactById(contactId) {
-  fs.readFile(contactsPath, "utf8", function (error, data) {
+function getContactById(contactId, callback) {
+  listContacts((error, contacts) => {
     if (error) {
-      console.log(error);
+      return callback(error, null);
     }
 
-    const contacts = JSON.parse(data);
+    const contact = contacts.find(
+      (contact) => Number(contact.id) === contactId
+    );
 
-    contacts.find((contact) => {
-      if (Number(contact.id) === contactId) {
-        return console.log(`contact with ID ${contactId} in contact List`);
-      }
-    });
+    if (contact) {
+      return callback(null, contact);
+    } else {
+      return callback(`Contact with ID ${contactId} not found`, null);
+    }
   });
 }
 
-function removeContact(contactId) {
-  fs.readFile(contactsPath, "utf8", function (error, data) {
+function removeContact(contactId, callback) {
+  listContacts((error, contacts) => {
     if (error) {
-      console.log(error);
+      return callback(error);
     }
-
-    const contacts = JSON.parse(data);
 
     const filterContacts = contacts.filter(
       (contact) => Number(contact.id) !== contactId
     );
 
-    console.table(filterContacts);
     fs.writeFile(
       contactsPath,
       JSON.stringify(filterContacts),
       function (error) {
         if (error) {
-          return console.log(error);
+          return callback(error);
         }
+        callback(null, filterContacts);
       }
     );
   });
 }
 
-function addContact(name, email, phone) {
-  fs.readFile(contactsPath, "utf8", function (error, data) {
+function addContact(name, email, phone, callback) {
+  listContacts((error, contacts) => {
     if (error) {
-      return console.log(error);
+      return callback(error);
     }
 
-    const contacts = JSON.parse(data);
-    contacts.push({
+    const newContact = {
       name,
       email,
       phone,
       id: contacts.length + 1,
-    });
+    };
 
-    console.table(contacts);
+    contacts.push(newContact);
+
     fs.writeFile(contactsPath, JSON.stringify(contacts), function (error) {
       if (error) {
-        return console.log(error);
+        return callback(error);
       }
-    });
-  });
-}
-
-module.exports = {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-};
-*/
-const fs = require("fs");
-const path = require("path");
-
-const contactsPath = path.resolve("./db/contacts.json");
-
-function listContacts() {
-  fs.readFile(contactsPath, "utf8", function (error, data) {
-    if (error) {
-      console.log(error.message);
-    }
-    const contacts = JSON.parse(data);
-    console.table(contacts);
-  });
-}
-
-function getContactById(contactId) {
-  fs.readFile(contactsPath, "utf8", function (error, data) {
-    if (error) {
-      console.log(error);
-    }
-
-    const contacts = JSON.parse(data);
-
-    contacts.find((contact) => {
-      if (Number(contact.id) === contactId) {
-        return console.log(`contact with ID ${contactId} in contact List`);
-      }
-      // console.log("Contact is not found");
-    });
-  });
-}
-
-function removeContact(contactId) {
-  fs.readFile(contactsPath, "utf8", function (error, data) {
-    if (error) {
-      console.log(error);
-    }
-
-    const contacts = JSON.parse(data);
-
-    const filterContacts = contacts.filter(
-      (contact) => Number(contact.id) !== contactId
-    );
-
-    console.table(filterContacts);
-    fs.writeFile(
-      contactsPath,
-      JSON.stringify(filterContacts),
-      function (error) {
-        if (error) {
-          return console.log(error);
-        }
-      }
-    );
-  });
-}
-
-function addContact(name, email, phone) {
-  fs.readFile(contactsPath, "utf8", function (error, data) {
-    if (error) {
-      return console.log(error);
-    }
-
-    const contacts = JSON.parse(data);
-    contacts.push({
-      name,
-      email,
-      phone,
-      id: contacts.length + 1,
-    });
-
-    console.table(contacts);
-    fs.writeFile(contactsPath, JSON.stringify(contacts), function (error) {
-      if (error) {
-        return console.log(error);
-      }
+      callback(null, newContact);
     });
   });
 }
